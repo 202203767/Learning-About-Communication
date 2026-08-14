@@ -9,9 +9,8 @@
 
 #define MAX_MESSAGE (64)
 
-int socket_make;
-
-void server_connect() {
+int main(void) {
+    int socket_make;
     struct sockaddr_in server_adder;
     socket_make = socket(AF_INET, SOCK_STREAM, 0);
     if(socket_make < 0) {
@@ -30,21 +29,6 @@ void server_connect() {
     }
 
     printf("サーバーに接続\n");
-}
-
-int main(void) {
-    char message[] =
-    "GET / HTTP/1.1\r\n"
-    "Host: localhost\r\n"
-    "\r\n";
-    char receive[MAX_MESSAGE];
-
-    server_connect();
-    send(socket_make, message, strlen(message), 0);
-
-    recv(socket_make, receive, sizeof(receive), 0);
-    printf("受信\n");
-    printf("%s\n", receive);
 
     close(socket_make);
     return 0;
