@@ -3,7 +3,7 @@
 
 typedef struct data {
     unsigned char id;
-    int data[MAX_DATA];
+    unsigned int data[MAX_DATA];
 } data;
 
 int main(void) {
