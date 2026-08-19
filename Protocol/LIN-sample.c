@@ -58,7 +58,7 @@ int main(void) {
     LIN sample;
     int len = 2;//バイト数今回は車速を挿入するため2バイトとする
     double spped = 137.8;
-    uint16_t input_spped = spped * 10;//車速今回は137.8km/hとする
+    uint16_t input_spped = spped * 10;
 
     //それぞれの情報を挿入
     sample.break_field = BREAK_FIELD;
