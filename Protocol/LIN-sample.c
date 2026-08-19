@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #define MAX_DATA 8
 #define LIN_SYNC 0x55
@@ -15,18 +16,38 @@ typedef struct LIN {
     uint8_t checksum;
 } LIN;
 
-void send_lin_frame(LIN *frame, int len){
-    printf("Break : %02X\n",frame->break_field);
-    printf("Sync  : %02X\n",frame->sync_byte_field);
-    printf("PID   : %02X\n",frame->protected_indefinder_field);
-    for(int i = 0; i < len; i++){
-        printf("DATA[%d] : %02X\n",i,frame->data[i]);
+void differences(uint8_t checksum, uint8_t data[], uint8_t PID, int len) {//誤りがあるか確認
+    checksum = ~checksum;
+    for(int i = 0; i < len; i ++) {
+        checksum -= data[i];
     }
-    printf("Checksum : %02X\n",frame->checksum);
+    checksum -= PID;
+    if(checksum == 0) {
+        printf("誤りなし\n");
+    } else {
+        printf("誤りあり\n");
+        exit(1);
+    }
 }
 
-uint8_t check_sum(uint8_t data[], int len) {
-    uint8_t checksum = 0;
+void send_and_receive(unsigned char sample_send[], int len){//送信したデータを受信した
+    LIN sample_receive;
+    
+    sample_receive.break_field = sample_send[0];
+    sample_receive.sync_byte_field = sample_send[1];
+    sample_receive.protected_indefinder_field = sample_send[2];
+    for(int i = 0; i < len; i ++) {
+        sample_receive.data[i] = sample_send[i + 3];
+    }
+    sample_receive.checksum = sample_send[len + 3];
+    differences(sample_receive.checksum, sample_receive.data, sample_receive.protected_indefinder_field, len);
+    uint16_t speed_raw = (sample_receive.data[0] << 8) | sample_receive.data[1];
+    double speed = speed_raw / 10.0;
+    printf("車速 : %.1f km/h\n", speed);
+}
+
+uint8_t make_check_sum(uint8_t data[],uint8_t PIF, int len) {//チェックサムを作成
+    uint8_t checksum = PIF;
     for(int i = 0; i < len; i ++) {
         checksum += data[i];
     }
@@ -36,18 +57,19 @@ uint8_t check_sum(uint8_t data[], int len) {
 int main(void) {
     LIN sample;
     int len = 2;//バイト数今回は車速を挿入するため2バイトとする
-    uint16_t spped = 1378;//車速今回は137.8km/hとする
+    double spped = 137.8;
+    uint16_t input_spped = spped * 10;//車速今回は137.8km/hとする
 
     //それぞれの情報を挿入
     sample.break_field = BREAK_FIELD;
     sample.sync_byte_field = LIN_SYNC;
     sample.protected_indefinder_field = PID_SPEED;
-    sample.data[0] = (spped >> 8) & 0xFF;
-    sample.data[1] = spped & 0xFF;
-    sample.checksum = sample.protected_indefinder_field + check_sum(sample.data,len);
+    sample.data[0] = (input_spped >> 8) & 0xFF;
+    sample.data[1] = input_spped & 0xFF;
+    sample.checksum = make_check_sum(sample.data, sample.protected_indefinder_field, len);
 
     //配列に置いて送信
-    unsigned char send_data[sizeof(sample)];
+    unsigned char send_data[len + 4];
     send_data[0] = sample.break_field;
     send_data[1] = sample.sync_byte_field;
     send_data[2] = sample.protected_indefinder_field;
@@ -56,7 +78,7 @@ int main(void) {
     }
     send_data[len + 3] = sample.checksum;
 
-    send_lin_frame(&sample, len);
+    send_and_receive(send_data, len);//送信（仮定）
 
     return 0;
 }
