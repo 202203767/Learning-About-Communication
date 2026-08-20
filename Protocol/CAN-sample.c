@@ -56,6 +56,8 @@ void mask(CAN mask_CAN) {
     mask_CAN.Control.IDE &= 0x01;
     mask_CAN.Control.FDF = 0x01;
     mask_CAN.Control.DLC &= 0x0F;
+    mask_CAN.CRC.CRC &= 0x7FFF;
+    mask_CAN.CRC.CRC_Delimiter &= 0x01;
     mask_CAN.ACK.ACK_Slots &= 0x01;
     mask_CAN.ACK.ACK_Delimiter &= 0x01;
     mask_CAN.eof &= 0x7F;
