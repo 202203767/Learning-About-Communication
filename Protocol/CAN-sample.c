@@ -34,11 +34,27 @@ typedef struct CAN {
     uint8_t eof; //7bit
 } CAN;
 
+void print_CAN(CAN CAN) {
+    printf("%d\n", CAN.SOF);
+    printf("%d\n", CAN.Arbitration.Base_ID);
+    printf("%d\n", CAN.Arbitration.RTR);
+    printf("%d\n", CAN.Control.IDE);
+    printf("%d\n", CAN.Control.FDF);
+    printf("%d\n", CAN.Control.DLC);
+    for(int i = 0; i < CAN.Control.DLC; i ++) {
+        printf("%d\n", CAN.Data[i]);
+    }
+    printf("%d\n", CAN.ACK.ACK_Slots);
+    printf("%d\n", CAN.ACK.ACK_Slots);
+    printf("%d\n", CAN.eof);
+}
+
 void mask(CAN mask_CAN) {
     mask_CAN.SOF &= 0x01;
     mask_CAN.Arbitration.Base_ID &= 0x7FF;
     mask_CAN.Arbitration.RTR &= 0x01;
     mask_CAN.Control.IDE &= 0x01;
+    mask_CAN.Control.FDF = 0x01;
     mask_CAN.Control.DLC &= 0x0F;
     mask_CAN.ACK.ACK_Slots &= 0x01;
     mask_CAN.ACK.ACK_Delimiter &= 0x01;
@@ -62,8 +78,7 @@ int main(void) {
     sample_CAN.eof = 0x7F;
 
     mask(sample_CAN); //ビット数に合わせてマスク
-
-
+    print_CAN(sample_CAN);
 
     return 0;
 }
