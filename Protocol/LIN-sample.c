@@ -16,6 +16,16 @@ typedef struct LIN {
     uint8_t checksum;
 } LIN;
 
+void print_LIN(LIN LIN, int len) {
+    printf("Break filed:%d\n", LIN.break_field);
+    printf("Sync byte field:%d\n", LIN.sync_byte_field);
+    printf("Protected indefinder field:%d\n", LIN.protected_indefinder_field);
+    for(int i = 0; i < len; i ++) {
+        printf("Data[%d]:%d\n", i, LIN.data[i]);
+    }
+    printf("Checksum:%d\n", LIN.checksum);
+}
+
 void differences(uint8_t checksum, uint8_t data[], uint8_t PID, int len) {//誤りがあるか確認
     checksum = ~checksum;
     for(int i = 0; i < len; i ++) {
@@ -43,6 +53,8 @@ void send_and_receive(unsigned char sample_send[], int len){//送信したデー
     differences(sample_receive.checksum, sample_receive.data, sample_receive.protected_indefinder_field, len);
     uint16_t speed_raw = (sample_receive.data[0] << 8) | sample_receive.data[1];
     double speed = speed_raw / 10.0;
+    printf("receive data\n");
+    print_LIN(sample_receive, len);
     printf("車速 : %.1f km/h\n", speed);
 }
 
@@ -68,8 +80,11 @@ int main(void) {
     sample.data[1] = input_spped & 0xFF;
     sample.checksum = make_check_sum(sample.data, sample.protected_indefinder_field, len);
 
+    printf("send data\n");
+    print_LIN(sample, len);
+
     //配列に置いて送信
-    unsigned char send_data[len + 4];
+    uint8_t send_data[len + 4];
     send_data[0] = sample.break_field;
     send_data[1] = sample.sync_byte_field;
     send_data[2] = sample.protected_indefinder_field;
