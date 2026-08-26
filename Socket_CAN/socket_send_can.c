@@ -9,7 +9,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-#define SPPED 0x100
+#define SPEED 0x100
 #define OIL_TEMP 0x101
 #define WATER_TEMP 0x102
 #define RPM 0x103
@@ -23,10 +23,10 @@ int main(void) {
     struct sockaddr_can addr;
     struct can_frame send;
     struct can_frame receive;
-    uint16_t send_id[] = {SPPED, OIL_TEMP, WATER_TEMP};
+    uint16_t send_id[] = {SPEED, OIL_TEMP, WATER_TEMP, RPM};
     //速度・油温・水温・回転数
-    double spped = 120.8;
-    uint16_t spped_int = spped * 10;
+    double speed = 120.8;
+    uint16_t speed_int = speed * 10;
     uint8_t oil_temp = 80;
     uint8_t water_temp = 90;
     uint16_t rpm = 4320;
@@ -51,10 +51,10 @@ int main(void) {
             send.can_id = send_id[i];
             send.can_dlc = 2;
             switch(send.can_id) {
-                case SPPED:
-                    send.data[0] = (spped_int >> 8) & 0xFF;
-                    send.data[1] = spped_int & 0xFF;
-                    printf("send spped\n");
+                case SPEED:
+                    send.data[0] = (speed_int >> 8) & 0xFF;
+                    send.data[1] = speed_int & 0xFF;
+                    printf("send speed\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
                     break;
@@ -71,6 +71,7 @@ int main(void) {
                     printf("send water temp\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
+                    break;
                 case RPM:
                     send.data[0] = (rpm >> 8) & 0xFF;
                     send.data[1] = rpm & 0xFF;
