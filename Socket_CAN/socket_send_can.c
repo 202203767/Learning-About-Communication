@@ -19,10 +19,10 @@
 
 int main(void) {
     int can_socket = 0;
+    char interface[IFNAMSIZ] = "vcan0";
     struct ifreq network_setup;//警告が出るが正常に動くので無視
     struct sockaddr_can addr;
     struct can_frame send;
-    struct can_frame receive;
     uint16_t send_id[] = {SPEED, OIL_TEMP, WATER_TEMP, RPM};
     //速度・油温・水温・回転数
     double speed = 120.8;
@@ -38,7 +38,7 @@ int main(void) {
         exit(1);
     }
     //インターフェースの取得
-    strcpy(network_setup.ifr_name, "vcan0");
+    strcpy(network_setup.ifr_name, interface);
     ioctl(can_socket, SIOCGIFINDEX, &network_setup);
     //バインド
     addr.can_family = AF_CAN;

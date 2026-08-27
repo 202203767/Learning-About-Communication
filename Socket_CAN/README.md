@@ -1,4 +1,29 @@
 概要
+ifreq構造体
+struct ifreq {
+    char ifr_name[IFNAMSIZ];  /* インターフェース名 (例: "eth0") */
+    union {
+        struct sockaddr ifr_addr;       /* IPアドレス */
+        struct sockaddr ifr_dstaddr;    /* 送信先アドレス */
+        struct sockaddr ifr_broadaddr;  /* ブロードキャストアドレス */
+        struct sockaddr ifr_netmask;    /* ネットマスク */
+        struct sockaddr ifr_hwaddr;     /* ハードウェア(MAC)アドレス */
+        short ifr_flags;                /* インターフェースフラグ */
+        int ifr_ifindex;                /* インターフェースインデックス */
+        int ifr_metric;                 /* メトリック */
+        int ifr_mtu;                    /* MTU */
+        struct ifmap ifr_map;           /* ハードウェアマップ */
+        char ifr_slave[IFNAMSIZ];       /* スレーブ名 */
+        char ifr_newname[IFNAMSIZ];     /* 新しい名前 */
+        char *ifr_data;                 /* 任意データ */
+    };
+};
+
+sockaddr_can構造体の中身
+struct sockaddr {
+   sa_family_t sa_family; // アドレスファミリ (例: AF_INET)
+   char sa_data[14]; // アドレスとポート情報
+};
 
 ソケットCAN
 動作方法
