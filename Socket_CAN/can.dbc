@@ -1,0 +1,11 @@
+BO_ 256 SPEED: 2 ECU
+ SG_ VehicleSpeed : 0|16@1+ (0.1,0) [0|250] "km/h" Receiver
+
+BO_ 257 OIL_TEMP: 1 ECU
+ SG_ OilTemperature : 0|8@1+ (1,0) [-40|200] "degC" Receiver
+
+BO_ 258 WATER_TEMP: 1 ECU
+ SG_ WaterTemperature : 0|8@1+ (1,0) [-40|200] "degC" Receiver
+
+BO_ 259 RPM: 2 ECU
+ SG_ EngineRPM : 0|16@1+ (1,0) [0|8000] "rpm" Receiver
