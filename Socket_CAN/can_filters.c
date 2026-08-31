@@ -23,6 +23,7 @@ int main(void) {
     struct ifreq network_setup;//警告が出るが正常に動くので無視
     struct sockaddr_can addr;
     struct can_frame receive;
+    struct can_filter filter[2];
     uint16_t send_id[] = {SPEED, OIL_TEMP, WATER_TEMP, RPM};
 
     //ソケットの生成
@@ -38,6 +39,13 @@ int main(void) {
     addr.can_family = AF_CAN;
     addr.can_ifindex = network_setup.ifr_ifindex;
     bind(can_socket, (struct sockaddr *)&addr, sizeof(addr));
+
+    filter[0].can_id = SPEED;
+    filter[0].can_mask = CAN_SFF_MASK;
+    filter[1].can_id = RPM;
+    filter[1].can_mask = CAN_SFF_MASK;
+
+    setsockopt(can_socket, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter));
 
     while(1) {
         read(can_socket, &receive, sizeof(receive));

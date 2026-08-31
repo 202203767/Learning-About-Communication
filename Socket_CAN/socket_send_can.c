@@ -13,7 +13,7 @@
 #define OIL_TEMP 0x101
 #define WATER_TEMP 0x102
 #define RPM 0x103
-#define ID_TYPES 3
+#define ID_TYPES 4
 #define MAX_SOCKET 1
 #define WAIT_TIME 2000000 //マイクロ単位
 
@@ -51,34 +51,38 @@ int main(void) {
             send.can_id = send_id[i];
             send.can_dlc = 2;
             switch(send.can_id) {
-                case SPEED:
+                case SPEED: {
                     send.data[0] = (speed_int >> 8) & 0xFF;
                     send.data[1] = speed_int & 0xFF;
                     printf("send speed\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
                     break;
-                case OIL_TEMP:
+                }
+                case OIL_TEMP: {
                     send.data[0] = (oil_temp >> 8) & 0xFF;
                     send.data[1] = oil_temp & 0xFF;
                     printf("send oil temp\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
                     break;
-                case WATER_TEMP:
+                }
+                case WATER_TEMP: {
                     send.data[0] = (water_temp >> 8) & 0xFF;
                     send.data[1] = water_temp & 0xFF;
                     printf("send water temp\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
                     break;
-                case RPM:
+                }
+                case RPM: {
                     send.data[0] = (rpm >> 8) & 0xFF;
                     send.data[1] = rpm & 0xFF;
                     printf("send rpm\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
                     break;
+                }  
             }
         }
     }
