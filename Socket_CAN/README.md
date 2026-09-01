@@ -38,3 +38,109 @@ $sudo ip link add dev vcan0 type vcan
 $sudo ip link set up vcan0
 $ip link show vcan0
 $candump vcan0
+
+
+DBCの実行方法
+
+$source can_env/bin/activate
+$cd 100_C_file/Send_and_receive/Socket_CAN
+$cantools dump can.dbc
+================================= Messages =================================
+
+  ------------------------------------------------------------------------
+
+  Name:           SPEED
+  Id:             0x100
+  Length:         2 bytes
+  Cycle time:     - ms
+  Senders:        ECU
+  Layout:
+
+                          Bit
+
+             7   6   5   4   3   2   1   0
+           +---+---+---+---+---+---+---+---+
+     B   0 |------------------------------x|
+     y     +---+---+---+---+---+---+---+---+
+     t   1 |<------------------------------|
+     e     +---+---+---+---+---+---+---+---+
+             +-- VehicleSpeed
+
+  Signal tree:
+
+    -- {root}
+       +-- VehicleSpeed
+
+  ------------------------------------------------------------------------
+
+  Name:           OIL_TEMP
+  Id:             0x101
+  Length:         1 bytes
+  Cycle time:     - ms
+  Senders:        ECU
+  Layout:
+
+                          Bit
+
+             7   6   5   4   3   2   1   0
+           +---+---+---+---+---+---+---+---+
+     B   0 |<-----------------------------x|
+     y     +---+---+---+---+---+---+---+---+
+     t       +-- OilTemperature
+     e
+
+  Signal tree:
+
+    -- {root}
+       +-- OilTemperature
+
+  ------------------------------------------------------------------------
+
+  Name:           WATER_TEMP
+  Id:             0x102
+  Length:         1 bytes
+  Cycle time:     - ms
+  Senders:        ECU
+  Layout:
+
+                          Bit
+
+             7   6   5   4   3   2   1   0
+           +---+---+---+---+---+---+---+---+
+     B   0 |<-----------------------------x|
+     y     +---+---+---+---+---+---+---+---+
+     t       +-- WaterTemperature
+     e
+
+  Signal tree:
+
+    -- {root}
+       +-- WaterTemperature
+
+  ------------------------------------------------------------------------
+
+  Name:           RPM
+  Id:             0x103
+  Length:         2 bytes
+  Cycle time:     - ms
+  Senders:        ECU
+  Layout:
+
+                          Bit
+
+             7   6   5   4   3   2   1   0
+           +---+---+---+---+---+---+---+---+
+     B   0 |------------------------------x|
+     y     +---+---+---+---+---+---+---+---+
+     t   1 |<------------------------------|
+     e     +---+---+---+---+---+---+---+---+
+             +-- EngineRPM
+
+  Signal tree:
+
+    -- {root}
+       +-- EngineRPM
+
+  ------------------------------------------------------------------------
+  //こうなっていればOK
+python3 DBC_test.py

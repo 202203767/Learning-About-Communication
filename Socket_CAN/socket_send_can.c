@@ -52,32 +52,32 @@ int main(void) {
             send.can_dlc = 2;
             switch(send.can_id) {
                 case SPEED: {
-                    send.data[0] = (speed_int >> 8) & 0xFF;
-                    send.data[1] = speed_int & 0xFF;
+                    send.data[0] = speed_int & 0xFF;
+                    send.data[1] = (speed_int >> 8) & 0xFF;
                     printf("send speed\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
                     break;
                 }
                 case OIL_TEMP: {
-                    send.data[0] = (oil_temp >> 8) & 0xFF;
-                    send.data[1] = oil_temp & 0xFF;
+                    send.data[0] = oil_temp & 0xFF;//リトルエンディアン
+                    send.data[1] = (oil_temp >> 8) & 0xFF;
                     printf("send oil temp\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
                     break;
                 }
                 case WATER_TEMP: {
-                    send.data[0] = (water_temp >> 8) & 0xFF;
-                    send.data[1] = water_temp & 0xFF;
+                    send.data[0] = water_temp & 0xFF;//リトルエンディアン
+                    send.data[1] = (water_temp >> 8) & 0xFF;
                     printf("send water temp\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
                     break;
                 }
                 case RPM: {
-                    send.data[0] = (rpm >> 8) & 0xFF;
-                    send.data[1] = rpm & 0xFF;
+                    send.data[0] = rpm & 0xFF;//リトルエンディアン
+                    send.data[1] = (rpm >> 8) & 0xFF;
                     printf("send rpm\n");
                     write(can_socket, &send, sizeof(send));
                     usleep(WAIT_TIME);
