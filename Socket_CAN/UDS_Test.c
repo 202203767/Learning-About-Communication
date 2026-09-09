@@ -54,9 +54,20 @@ int main(void) {
     UDS_send.data[2] = request.did_low;
 
     for(int i = 0; i < MAX_SOCKET; i ++) {
+        printf("send data\n");
         write(can_socket, &UDS_send, sizeof(UDS_send));
+        printf("send data is success!\n");
+        usleep(WAIT_TIME);
 
         read(can_socket, &UDS_receive, sizeof(UDS_receive));
+        printf("receive data\n");
+        usleep(WAIT_TIME);
+        printf("ID:%X\n", UDS_receive.can_id);
+        printf("DLC:%d\n", UDS_receive.can_dlc);
+        for(int i = 0; i < UDS_receive.can_dlc; i ++) {
+            printf("%X\n", UDS_receive.data[i]);
+        }
+        usleep(WAIT_TIME);
     }
     return 0;
 }
