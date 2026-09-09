@@ -22,12 +22,17 @@ typedef struct {
 } UDS_receive;
 
 int main(void) {
-    UDS_receive receive;
     int can_socket = 0;
     char interface[IFNAMSIZ] = "vcan0";
     struct ifreq network_setup;//警告が出るが正常に動くので無視
     struct sockaddr_can addr;
     struct can_frame UDS_responce, UDS_data;
+
+    UDS_receive Dinamic_session = {0x50, 0x01};
+    UDS_receive ECU_reset = {0x51, 0x01};
+    UDS_receive Read_data = {0x62, 0xF1, 0x90, 0x12, 0x34};
+    UDS_receive Write_data = {0x6E, 0xF1, 0x89};
+    UDS_receive Read_DTC = {0x59, 0x02, 0x12, 0x34, 0x56};
 
     //ソケットの生成
     can_socket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
@@ -58,38 +63,68 @@ int main(void) {
         switch(UDS_data.data[0]) {
             case 0x10: {
                 printf("Diagnostic Session Control\n");
+                UDS_responce.can_id = 0x7E8;
+                UDS_responce.can_dlc = 2;
+                UDS_responce.data[0] = Dinamic_session.sid;
+                UDS_responce.data[1] = Dinamic_session.did_high;
+                printf("send data\n");
+                usleep(WAIT_TIME);
                 write(can_socket, &UDS_responce, sizeof(UDS_responce));
+                printf("send data is success!\n");
                 break;
             }
             case 0x11: {
                 printf("ECU Reset\n");
+                UDS_responce.can_id = 0x7E8;
+                UDS_responce.can_dlc = 2;
+                UDS_responce.data[0] = ECU_reset.sid;
+                UDS_responce.data[1] = ECU_reset.did_high;
+                printf("send data\n");
+                usleep(WAIT_TIME);
                 write(can_socket, &UDS_responce, sizeof(UDS_responce));
+                printf("send data is success!\n");
                 break;
             }
             case 0x22: {
                 printf("Read Data By Identifier\n");
-                receive.sid = 0x62;
-                receive.did_high = 0xF1;
-                receive.did_low = 0x90;
-                receive.data_high = 0x12;
-                receive.data_low = 0x34;
                 UDS_responce.can_id = 0x7E8;
                 UDS_responce.can_dlc = 5;
-                UDS_responce.data[0] = receive.sid;
-                UDS_responce.data[1] = receive.did_high;
-                UDS_responce.data[2] = receive.did_high;
-                UDS_responce.data[3] = receive.data_high;
-                UDS_responce.data[4] = receive.data_low;
+                UDS_responce.data[0] = Read_data.sid;
+                UDS_responce.data[1] = Read_data.did_high;
+                UDS_responce.data[2] = Read_data.did_low;
+                UDS_responce.data[3] = Read_data.data_high;
+                UDS_responce.data[4] = Read_data.data_low;
+                printf("send data\n");
+                usleep(WAIT_TIME);
                 write(can_socket, &UDS_responce, sizeof(UDS_responce));
+                printf("send data is success!\n");
             }
             case 0x2E: {
                 printf("Write Data By Identifier\n");
+                UDS_responce.can_id = 0x7E8;
+                UDS_responce.can_dlc = 3;
+                UDS_responce.data[0] = Write_data.sid;
+                UDS_responce.data[1] = Write_data.did_high;
+                UDS_responce.data[2] = Write_data.did_low;
+                printf("send data\n");
+                usleep(WAIT_TIME);
                 write(can_socket, &UDS_responce, sizeof(UDS_responce));
+                printf("send data is success!\n");
                 break;
             }
             case 0x19: {
                 printf("Read DTC Information\n");
+                UDS_responce.can_id = 0x7E8;
+                UDS_responce.can_dlc = 5;
+                UDS_responce.data[0] = Read_DTC.sid;
+                UDS_responce.data[1] = Read_DTC.did_high;
+                UDS_responce.data[2] = Read_DTC.did_low;
+                UDS_responce.data[3] = Read_DTC.data_high;
+                UDS_responce.data[4] = Read_DTC.data_low;
+                printf("send data\n");
+                usleep(WAIT_TIME);
                 write(can_socket, &UDS_responce, sizeof(UDS_responce));
+                printf("send data is success!\n");
                 break;
             }
         }
