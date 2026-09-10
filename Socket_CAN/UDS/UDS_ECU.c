@@ -58,12 +58,13 @@ int main(void) {
         printf("ID:%X\n", UDS_data.can_id);
         printf("DLC:%X\n", UDS_data.can_dlc);
         for(int i = 0; i < UDS_data.can_dlc; i ++) {
-            printf("%X\n", UDS_data.data[i]);
+            printf("%X ", UDS_data.data[i]);
         }
+        printf("\n");
+        UDS_responce.can_id = 0x7E8;
         switch(UDS_data.data[0]) {
             case 0x10: {
                 printf("Diagnostic Session Control\n");
-                UDS_responce.can_id = 0x7E8;
                 UDS_responce.can_dlc = 2;
                 UDS_responce.data[0] = Dinamic_session.sid;
                 UDS_responce.data[1] = Dinamic_session.did_high;
@@ -75,7 +76,6 @@ int main(void) {
             }
             case 0x11: {
                 printf("ECU Reset\n");
-                UDS_responce.can_id = 0x7E8;
                 UDS_responce.can_dlc = 2;
                 UDS_responce.data[0] = ECU_reset.sid;
                 UDS_responce.data[1] = ECU_reset.did_high;
@@ -87,7 +87,6 @@ int main(void) {
             }
             case 0x22: {
                 printf("Read Data By Identifier\n");
-                UDS_responce.can_id = 0x7E8;
                 UDS_responce.can_dlc = 5;
                 UDS_responce.data[0] = Read_data.sid;
                 UDS_responce.data[1] = Read_data.did_high;
@@ -101,7 +100,6 @@ int main(void) {
             }
             case 0x2E: {
                 printf("Write Data By Identifier\n");
-                UDS_responce.can_id = 0x7E8;
                 UDS_responce.can_dlc = 3;
                 UDS_responce.data[0] = Write_data.sid;
                 UDS_responce.data[1] = Write_data.did_high;
@@ -114,7 +112,6 @@ int main(void) {
             }
             case 0x19: {
                 printf("Read DTC Information\n");
-                UDS_responce.can_id = 0x7E8;
                 UDS_responce.can_dlc = 5;
                 UDS_responce.data[0] = Read_DTC.sid;
                 UDS_responce.data[1] = Read_DTC.did_high;
