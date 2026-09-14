@@ -106,14 +106,25 @@ int main(void) {
                     break;
                 }
                 case 0x22: {
-                    printf("Read Data By Identifier\n");
-                    UDS_responce.can_dlc = 5;
-                    UDS_responce.data[0] = Read_data.sid;
-                    UDS_responce.data[1] = Read_data.did_high;
-                    UDS_responce.data[2] = Read_data.did_low;
-                    UDS_responce.data[3] = Read_data.data_high;
-                    UDS_responce.data[4] = Read_data.data_low;
-                    break;
+                    int found = 0;
+                    uint8_t did = (UDS_data.data[1] << 8) || UDS_data.data[2];
+                    for(int i = 0; i < 3; i++){
+                        if(table[i].did == did){
+                            found = 1;
+                            UDS_responce.can_dlc = 5;
+                            UDS_responce.data[0] = 0x62;
+                            UDS_responce.data[1] = UDS_data.data[1];
+                            UDS_responce.data[2] = UDS_data.data[2];
+                            UDS_responce.data[3] = (table[i].value >> 8) & 0xFF;
+                            UDS_responce.data[4] = table[i].value & 0xFF;
+                            break;
+                        }else if(!found) {
+                            UDS_responce.can_dlc = 3;
+                            UDS_responce.data[0] = 0x7F;
+                            UDS_responce.data[1] = 0x22;
+                            UDS_responce.data[2] = 0x31;
+                        }
+                    }
                 }
                 case 0x2E: {
                     printf("Write Data By Identifier\n");
@@ -148,7 +159,7 @@ int main(void) {
                         UDS_responce.data[2] = 0x12;
                         UDS_responce.data[3] = 0x34;
                     } else if(UDS_data.data[1] == 0x02) {
-                        if(UDS_data.data[2] = 0x12 && UDS_data.data[3] == 0x34) {
+                        if(UDS_data.data[2] == 0x12 && UDS_data.data[3] == 0x34) {
                             unlock = 1;
 
                             UDS_responce.can_dlc = 2;
